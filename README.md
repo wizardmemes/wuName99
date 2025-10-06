@@ -4,7 +4,7 @@ WuName99 is a lightweight C++ command-line tool that generates
 Wu-Tang–inspired usernames in the format:
 
 ```bash
-AdjectiveNoun##
+AdjectiveNoun## 
 ```
 
 Example output:
@@ -21,9 +21,9 @@ SilentShadow15
 
 - Generates usernames in the format `AdjectiveNoun##`
 - Simple CLI options:
-  - `--N` to generate multiple names
-  - `--copy` to copy the result to clipboard
-  - `--help` to display usage
+  - `--count N` to generate multiple names
+  - `--copy` or `-c` to copy the result to clipboard
+  - `--help` or `-h` to display usage
 - No dependencies at runtime
 - Portable (macOS, Linux, Windows)
 
@@ -62,13 +62,13 @@ wuname99
 ### Generate multiple names
 
 ```bash
-wuname99 --5
+wuname99 --count 5
 ```
 
 ### Copy last generated name to clipboard
 
 ```bash
-wuname99 --copy
+wuname99 --copy (or -c)
 ```
 
 Clipboard utilities used:
@@ -80,7 +80,7 @@ Clipboard utilities used:
 ### Help
 
 ```bash
-wuname99 --help
+wuname99 --help (or -h)
 ```
 
 ---
