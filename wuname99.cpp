@@ -4,11 +4,24 @@
 #include <cstdlib>
 #include <cstdio>
 #include "words.h"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <random>
+#include "words.h"
 
+#if defined(_WIN32)
+#include <cstdio>
+#include <windows.h>
+#else
+#include <cstdio>
+#endif
 
+// Function to print help
 void printHelp() {
-  std::cout <<
-  "WuName99 - Random Wu-Tang style username generator\n\n"
+    std::cout <<
+    "WuName99 - Random Wu-Tang style username generator\n\n"
     "Usage:\n"
     "  wuname99              Generate one name\n"
     "  wuname99 --N          Generate N names (e.g. --5)\n"
@@ -19,15 +32,29 @@ void printHelp() {
     "  • Example: wuname99 --3 --copy\n";
 }
 
+// Cross-platform clipboard copy
 void copyToClipboard(const std::string& text) {
-  FILE* pipe= popen("pbcopy", "w");
-  if (pipe) {
-    fwrite(text.c_str(), sizeof(char), text.size(), pipe);
-    pclose(pipe);
-    std::cout << "Copied to Clipboard." << std::endl;
-  } else {
-    std::cerr << "failed to access clipboard." << std::endl;
-  }
+#if defined(__APPLE__)
+    FILE* pipe = popen("pbcopy", "w");
+#elif defined(__linux__)
+    FILE* pipe = popen("xclip -selection clipboard", "w");
+#elif defined(_WIN32)
+    FILE* pipe = _popen("clip", "w");
+#else
+    FILE* pipe = nullptr;
+#endif
+
+    if (pipe) {
+        fwrite(text.c_str(), sizeof(char), text.size(), pipe);
+#if defined(_WIN32)
+        _pclose(pipe);
+#else
+        pclose(pipe);
+#endif
+        std::cout << "(Copied to clipboard)\n";
+    } else {
+        std::cerr << "Clipboard copy not supported on this system.\n";
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -59,22 +86,5 @@ int main(int argc, char* argv[]) {
     // Random Engine, seeded with current time
     std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<int> adjDist(0, adjectives.size() - 1);
-    std::uniform_int_distribution<int> nounDist(0, nouns.size() - 1);
-    std::uniform_int_distribution<int> numDist(10, 99);
-
-    std::string lastName;
-
-    for (int i = 0; i < count; i++) {
-        lastName = adjectives[adjDist(rng)] +
-                   nouns[nounDist(rng)] +
-                   std::to_string(numDist(rng));
-        std::cout << lastName << "\n";
-    }
-
-    if (copyFlag && !lastName.empty()) {
-        copyToClipboard(lastName);
-    }
-
-    return 0;
 }
 
